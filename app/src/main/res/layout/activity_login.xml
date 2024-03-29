@@ -74,13 +74,14 @@
             android:elevation="0dp"/>
 
         <Button
+            android:id="@+id/SignIn_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sign In"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:background="#000"
-            android:textColor="#fff"
-             android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"/>
+            android:text="Sign In"
+            android:textColor="#fff" />
 
         <Button
             android:id="@+id/redirectSignup"
