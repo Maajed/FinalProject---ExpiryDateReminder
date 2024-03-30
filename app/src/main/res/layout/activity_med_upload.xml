@@ -77,13 +77,15 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:id="@+id/uploadLang"
+                android:id="@+id/uploadDate"
                 android:background="@drawable/lavendar_border"
                 android:layout_marginTop="20dp"
                 android:padding="16dp"
-                android:hint="Enter language"
+                android:focusable="false"
+                android:hint="Enter Epiry Date"
                 android:gravity="start|center_vertical"
                 android:textColor="@color/lavender"/>
+
 
             <Button
                 android:layout_width="match_parent"
