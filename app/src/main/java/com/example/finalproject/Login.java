@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DataSnapshot;
@@ -125,10 +126,10 @@ public class Login extends AppCompatActivity {
                         intent.putExtra("password",passwordFromDB);
                         startActivity(intent);
 
+                        // Display toast message for successful sign-in
+                        Toast.makeText(Login.this, "Sign in successful", Toast.LENGTH_SHORT).show();
                     }
-
-                    else
-                    {
+                    else {
                         password.setError("Wrong Password");
                     }
                 }
@@ -140,9 +141,10 @@ public class Login extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                // Handle database error if needed
             }
         });
+
     }
 
 

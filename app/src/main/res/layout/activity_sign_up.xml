@@ -24,7 +24,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SignUp to start your new Journey"
+        android:text="Create A New Account"
         android:textSize="18sp"/>
     
     <LinearLayout
@@ -114,8 +114,6 @@
         android:layout_height="wrap_content"
         android:background="#00000000"
         android:text="Already have an account? Login"
-
-
         android:textColor="@color/black" />
 
 
