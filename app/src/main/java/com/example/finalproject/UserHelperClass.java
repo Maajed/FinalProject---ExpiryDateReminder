@@ -1,19 +1,19 @@
 package com.example.finalproject;
 
 public class UserHelperClass {
-    String name,username,email,phoneNo,password;
+    String name,username,email,phoneNo;
 
     public UserHelperClass()
     {
 
     }
 
-    public UserHelperClass(String name, String username, String email, String phoneNo, String password) {
+
+    public UserHelperClass(String name, String username, String email, String phoneNo) {
         this.name = name;
         this.username = username;
         this.email = email;
         this.phoneNo = phoneNo;
-        this.password = password;
     }
 
     public String getName() {
@@ -48,11 +48,4 @@ public class UserHelperClass {
         this.phoneNo = phoneNo;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

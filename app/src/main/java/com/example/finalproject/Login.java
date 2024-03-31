@@ -10,7 +10,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,7 +26,9 @@ public class Login extends AppCompatActivity {
 
     Button redirectSignup,SignIn_btn;
 
-    TextInputLayout username,password;
+    TextInputLayout email,password;
+
+    FirebaseAuth fAuth;
 
 
 
@@ -33,15 +39,28 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
-        username = findViewById(R.id.username);
+        email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         redirectSignup = findViewById(R.id.redirectSignup);
         SignIn_btn = findViewById(R.id.SignIn_btn);
 
+        fAuth = FirebaseAuth.getInstance();
+
         SignIn_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loginUser(view);
+//                loginUser(view);
+                fAuth.signInWithEmailAndPassword(email.getEditText().getText().toString(), password.getEditText().getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()){
+                            Toast.makeText(getApplicationContext(), "Login Successfully", Toast.LENGTH_SHORT).show();
+
+                            Intent intent = new Intent(getApplicationContext(), Home.class);
+                            startActivity(intent);
+                        }
+                    }
+                });
             }
         });
 
@@ -54,15 +73,15 @@ public class Login extends AppCompatActivity {
         });
     }
 
-    private Boolean validateUsername()
+    private Boolean validateEmail()
     {
-        String val = username.getEditText().getText().toString();
+        String val = email.getEditText().getText().toString();
         if (val.isEmpty()) {
-            username.setError("Field cannot be empty");
+            email.setError("Field cannot be empty");
             return false;
         } else {
-            username.setError(null);
-            username.setErrorEnabled(false);
+            email.setError(null);
+            email.setErrorEnabled(false);
             return true;
         }
     }
@@ -81,71 +100,71 @@ public class Login extends AppCompatActivity {
 
     public void loginUser(View view) {
         //Validate Login Info
-        if (!validateUsername() | !validatePassword()) {
+        if (!validateEmail() | !validatePassword()) {
             return;
         } else {
 
-            isUser();
+//            isUser();
         }
     }
 
 
 
-    private void isUser()
-    {
-        String userEnteredUsername = username.getEditText().getText().toString().trim();
-        String userEnteredPassword = password.getEditText().getText().toString().trim();
-
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
-        Query checkUser = reference.orderByChild("username").equalTo(userEnteredUsername);
-
-        checkUser.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    username.setError(null);
-                    username.setErrorEnabled(false);
-
-                    String passwordFromDB = dataSnapshot.child(userEnteredUsername).child("password").getValue(String.class);
-
-                    if(passwordFromDB.equals(userEnteredPassword)){
-                        username.setError(null);
-                        username.setErrorEnabled(false);
-
-                        String nameFromDB = dataSnapshot.child(userEnteredUsername).child("name").getValue(String.class);
-                        String usernameFromDB = dataSnapshot.child(userEnteredUsername).child("username").getValue(String.class);
-                        String phoneNoFromDB = dataSnapshot.child(userEnteredUsername).child("phoneNo").getValue(String.class);
-                        String emailFromDB = dataSnapshot.child(userEnteredUsername).child("email").getValue(String.class);
-
-                        Intent intent = new Intent(getApplicationContext(), Home.class);
-
-                        intent.putExtra("name",nameFromDB);
-                        intent.putExtra("username",usernameFromDB);
-                        intent.putExtra("email",emailFromDB);
-                        intent.putExtra("phoneNo",phoneNoFromDB);
-                        intent.putExtra("password",passwordFromDB);
-                        startActivity(intent);
-
-                        // Display toast message for successful sign-in
-                        Toast.makeText(Login.this, "Sign in successful", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        password.setError("Wrong Password");
-                    }
-                }
-                else {
-                    username.setError("No such User exists");
-                    username.requestFocus();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Handle database error if needed
-            }
-        });
-
-    }
+//    private void isUser()
+//    {
+//        String userEnteredUsername = username.getEditText().getText().toString().trim();
+//        String userEnteredPassword = password.getEditText().getText().toString().trim();
+//
+//        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
+//        Query checkUser = reference.orderByChild("username").equalTo(userEnteredUsername);
+//
+//        checkUser.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                if(dataSnapshot.exists()){
+//                    username.setError(null);
+//                    username.setErrorEnabled(false);
+//
+//                    String passwordFromDB = dataSnapshot.child(userEnteredUsername).child("password").getValue(String.class);
+//
+//                    if(passwordFromDB.equals(userEnteredPassword)){
+//                        username.setError(null);
+//                        username.setErrorEnabled(false);
+//
+//                        String nameFromDB = dataSnapshot.child(userEnteredUsername).child("name").getValue(String.class);
+//                        String usernameFromDB = dataSnapshot.child(userEnteredUsername).child("username").getValue(String.class);
+//                        String phoneNoFromDB = dataSnapshot.child(userEnteredUsername).child("phoneNo").getValue(String.class);
+//                        String emailFromDB = dataSnapshot.child(userEnteredUsername).child("email").getValue(String.class);
+//
+//                        Intent intent = new Intent(getApplicationContext(), Home.class);
+//
+//                        intent.putExtra("name",nameFromDB);
+//                        intent.putExtra("username",usernameFromDB);
+//                        intent.putExtra("email",emailFromDB);
+//                        intent.putExtra("phoneNo",phoneNoFromDB);
+//                        intent.putExtra("password",passwordFromDB);
+//                        startActivity(intent);
+//
+//                        // Display toast message for successful sign-in
+//                        Toast.makeText(Login.this, "Sign in successful", Toast.LENGTH_SHORT).show();
+//                    }
+//                    else {
+//                        password.setError("Wrong Password");
+//                    }
+//                }
+//                else {
+//                    username.setError("No such User exists");
+//                    username.requestFocus();
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                // Handle database error if needed
+//            }
+//        });
+//
+//    }
 
 
 

@@ -15,6 +15,9 @@
         android:theme="@style/Theme.FinalProject"
         tools:targetApi="31">
         <activity
+            android:name=".DetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".MedUpload"
             android:exported="false" />
         <activity
