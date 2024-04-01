@@ -4,8 +4,8 @@ public class DataClass {
     private String dataId;
     private String dataProduct;
     private String dataDesc;
-    private String dataLang;
     private String dataImage;
+    private String expiryDate;
 
     public String getDataId() {
         return dataId;
@@ -19,19 +19,30 @@ public class DataClass {
         return dataDesc;
     }
 
-    public String getDataLang() {
-        return dataLang;
-    }
-
     public String getDataImage() {
         return dataImage;
     }
 
-    public DataClass(String dataId, String dataProduct, String dataDesc, String dataLang, String dataImage) {
-        this.dataId = dataId;
-        this.dataProduct = dataProduct;
+    @Override
+    public String toString() {
+        return "DataClass{" +
+                "dataDesc='" + dataDesc + '\'' +
+                ", dataId='" +  dataId + '\'' +
+                ", dataImage='" + dataImage + '\'' +
+                ", dataProduct='" + dataProduct + '\'' +
+               ", expiryDate='" + expiryDate + '\'' +
+                '}';
+    }
+
+    public String getExpiryDate() {
+        return expiryDate;
+    }
+
+    public DataClass(String dataId, String dataProduct, String dataDesc, String dataImage, String expiryDate) {
         this.dataDesc = dataDesc;
-        this.dataLang = dataLang;
+        this.dataId = dataId;
         this.dataImage = dataImage;
+        this.dataProduct = dataProduct;
+        this.expiryDate = expiryDate;
     }
 }

@@ -2,26 +2,41 @@ package com.example.finalproject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FoodCategory extends AppCompatActivity {
-
-
-
 
     FloatingActionButton fab;
 
     BottomNavigationView nav_view;
-
     FirebaseAuth mAuth;
+    RecyclerView recyclerView;
+    DatabaseReference databaseReference;
+    FirebaseDatabase database;
+    List<String> myList = new ArrayList<>();
+    List<DataClass> finalList = new ArrayList<>();
+    private RecyclerView.LayoutManager layoutManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +47,52 @@ public class FoodCategory extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         fab = findViewById(R.id.fab);
+        recyclerView = findViewById(R.id.recyclerView);
+
+        database = FirebaseDatabase.getInstance();
+
+        String currentUser = mAuth.getCurrentUser().getUid();
+        String statement = "Categories/Food/" + currentUser;
+        databaseReference = database.getReference(statement);
+
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                finalList.clear();
+                int count = 0;
+                for(DataSnapshot itemSnapshot: snapshot.getChildren()){
+                    myList.clear();
+                    for (DataSnapshot valueSnapshot: itemSnapshot.getChildren()){
+                        myList.add(valueSnapshot.getValue(String.class));
+                    }
+                    DataClass dataClass = new DataClass(myList.get(1), myList.get(3), myList.get(0), myList.get(2), myList.get(4));
+                    finalList.add(dataClass);
+//                    Toast.makeText(FoodCategory.this, "Worked", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(FoodCategory.this, itemSnapshot.getValue(String.class), Toast.LENGTH_SHORT).show();
+//                    Log.e("Naim", "itemSnapShot: " + .getValue(String.class));
+                    Log.d("Naim", "listValue: " + myList.get(count));
+                    count++;
+                }
+                recyclerView.setHasFixedSize(true);
+
+                layoutManager = new LinearLayoutManager(getApplicationContext());
+                recyclerView.setLayoutManager(layoutManager);
+
+                FoodAdapter foodAdapter = new FoodAdapter(finalList, getApplicationContext());
+
+                recyclerView.setAdapter(foodAdapter);
+//                DataClass dataClass = new DataClass(myList.get(1), myList.get(3), myList.get(0), myList.get(2), myList.get(4));
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        Log.d("Naim", "finalList: " + finalList.toString());
+
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
