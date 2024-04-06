@@ -2,6 +2,7 @@ package com.example.finalproject;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +44,13 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        Glide.with(context).load(dataList.get(position).getDataImage()).into(holder.recImage);
+//        Glide.with(context).load(dataList.get(position).getDataImage()).into(holder.recImage);
+        System.out.println(dataList.get(position).getDataImage());
+        Toast.makeText(context.getApplicationContext(), dataList.get(position).getDataImage(),Toast.LENGTH_SHORT);
+        Log.d("------------",dataList.get(position).getDataImage());
+        Glide.with(holder.recImage)
+                .load(Uri.parse(dataList.get(position).getDataImage()))
+                .into(holder.recImage);
         holder.recTitle.setText(dataList.get(position).getDataProduct());
         holder.recDesc.setText(dataList.get(position).getDataDesc());
         holder.recDate.setText(dataList.get(position).getExpiryDate());
@@ -82,5 +89,7 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkAdapter.MyViewHolder
             recDate = itemView.findViewById(R.id.recDate);
             recTitle = itemView.findViewById(R.id.recProduct);
         }
+
+
     }
 }

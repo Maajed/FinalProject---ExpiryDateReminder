@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -30,6 +31,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.util.Calendar;
 
@@ -56,7 +58,7 @@ public class MedUpload extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_food_upload);
+        setContentView(R.layout.activity_med_upload);
 
 
         // Initialize Firebase Storage
@@ -114,19 +116,35 @@ public class MedUpload extends AppCompatActivity {
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Toast.makeText(MedUpload.this, "Upload successful", Toast.LENGTH_SHORT).show();
-                        Uri uriImage = uploadTask.getResult().getUploadSessionUri();
-                        imageURL = uriImage.toString();
-                        uploadData();
+                        fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                Toast.makeText(MedUpload.this, "Upload successful", Toast.LENGTH_SHORT).show();
+//
+                                imageURL = uri.toString();
+                                uploadData();
 
+                            }
+                        });
                     }
                 });
+//                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                        @Override
+//                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                            Toast.makeText(FoodUpload.this, "Upload successful", Toast.LENGTH_SHORT).show();
+//                            Uri uriImage = uploadTask.getResult().getUploadSessionUri();
+//                            imageURL = uriImage.toString();
+//                            uploadData();
+//
+//                        }
+//                    });
 
 
             }
         });
 
     }
+
 
     public void uploadData(){
         String title = uploadProductId.getText().toString();
@@ -141,6 +159,7 @@ public class MedUpload extends AppCompatActivity {
         String currentDate = DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
         firebaseAuth = FirebaseAuth.getInstance();
         String currentUser = firebaseAuth.getCurrentUser().getUid();
+
         FirebaseDatabase.getInstance().getReference("Categories").child("Medicine").child(currentUser).child(dataClass.getDataId())
                 .setValue(dataClass).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override

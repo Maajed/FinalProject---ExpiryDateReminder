@@ -75,7 +75,7 @@ public class FoodCategory extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 finalList.clear();
-                int count = 0;
+                String strMessage = "";
                 for(DataSnapshot itemSnapshot: snapshot.getChildren()){
                     myList.clear();
                     for (DataSnapshot valueSnapshot: itemSnapshot.getChildren()){
@@ -85,9 +85,9 @@ public class FoodCategory extends AppCompatActivity {
                     finalList.add(dataClass);
                     long daysDifference = daysCalculator(dataClass);
 
-                    if(daysDifference == 0){
-                        notification(dataClass.getDataProduct(), daysDifference);
-                        Log.d("Naim_Wow", "Expired food for " + dataClass.getDataProduct());
+                    if(daysDifference <= 5 && daysDifference >=0){
+                        strMessage += " " + dataClass.getDataProduct() + " expires in " + String.valueOf(daysDifference) + " days "+" \n";
+                        Log.d("Reminder", "Expired food for " + dataClass.getDataProduct());
 
                     }
 //                    Toast.makeText(FoodCategory.this, "Worked", Toast.LENGTH_SHORT).show();
@@ -96,6 +96,7 @@ public class FoodCategory extends AppCompatActivity {
 //                    Log.d("Naim", "listValue: " + myList.get(count));
 //                    count++;
                 }
+                notification(strMessage);
                 recyclerView.setHasFixedSize(true);
 
                 layoutManager = new LinearLayoutManager(getApplicationContext());
@@ -113,7 +114,7 @@ public class FoodCategory extends AppCompatActivity {
 
             }
         });
-        Log.d("Naim", "finalList: " + finalList.toString());
+            Log.d("Food", "finalList: " + finalList.toString());
 
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -162,7 +163,7 @@ public class FoodCategory extends AppCompatActivity {
 
 
 
-    private void notification(String message, long days) {
+    private void notification(String message) {
         // Define notification channel ID
         String CHANNEL_ID = "CHANNEL_ID";
 
@@ -172,8 +173,10 @@ public class FoodCategory extends AppCompatActivity {
             try {
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_launcher_background)
-                        .setContentTitle("Test")
-                        .setContentText(message + " expires in " + days + " days")
+                        .setContentTitle("Expired goods reminder")
+                        .setContentText("You have some expired goods: \n")
+                        .setStyle(new NotificationCompat.BigTextStyle()
+                                .bigText(message))
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
                 NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -208,7 +211,7 @@ public class FoodCategory extends AppCompatActivity {
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // If permission is granted, proceed with creating the notification
-                notification("permission test", 0);
+                notification("permission test");
             } else {
                 // If permission is denied, handle it accordingly (e.g., display a message to the user)
                 Toast.makeText(this, "Notification permission denied", Toast.LENGTH_SHORT).show();
@@ -223,11 +226,19 @@ public class FoodCategory extends AppCompatActivity {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             Date date = sdf.parse(dataClass.getExpiryDate());
-            dateValues[0] = Integer.parseInt(new SimpleDateFormat("dd").format(date));
-            dateValues[1] = Integer.parseInt(new SimpleDateFormat("MM").format(date));
-            dateValues[2] = Integer.parseInt(new SimpleDateFormat("yyyy").format(date));
+            if (date != null) {
+                dateValues[0] = Integer.parseInt(new SimpleDateFormat("dd").format(date));
+                dateValues[1] = Integer.parseInt(new SimpleDateFormat("MM").format(date));
+                dateValues[2] = Integer.parseInt(new SimpleDateFormat("yyyy").format(date));
+            } else {
+                // Handle the case when parsing fails
+                Log.e("FoodCategory", "Failed to parse date");
+                return -1; // or any suitable default value
+            }
         } catch (ParseException e) {
-            dateValues = null;
+            // Handle the parsing exception
+            Log.e("FoodCategory", "ParseException: " + e.getMessage());
+            return -1; // or any suitable default value
         }
 
         LocalDate currentDate = null;
@@ -248,4 +259,5 @@ public class FoodCategory extends AppCompatActivity {
         // Output the difference
         return daysUntilAlarm;
     }
+
 }
